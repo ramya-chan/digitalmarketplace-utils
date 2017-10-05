@@ -2,6 +2,8 @@ import os
 from flask_featureflags.contrib.inline import InlineFeatureFlag
 from . import config, logging, proxy_fix, request_id, formats, filters
 from flask.ext.script import Manager, Server
+from flask import request, current_app
+from flask_login import current_user
 
 
 def init_app(
@@ -44,6 +46,14 @@ def init_app(
     @application.after_request
     def add_header(response):
         response.headers['X-Frame-Options'] = 'DENY'
+        if hasattr(current_app, 'login_manager') and current_user.is_authenticated():
+            response.headers['Cache-Control'] = 'No-Cache'
+        return response
+
+    @application.after_request
+    def add_logged_in_cookie(response):
+        if 'dm_logged_in' not in request.cookies:
+            response.set_cookie('dm_logged_in', value='FALSE')
         return response
 
     # Make filters accessible in templates.
