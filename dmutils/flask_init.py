@@ -50,12 +50,6 @@ def init_app(
             response.headers['Cache-Control'] = 'No-Cache'
         return response
 
-    @application.after_request
-    def add_logged_in_cookie(response):
-        if 'dm_logged_in' not in request.cookies:
-            response.set_cookie('dm_logged_in', value='FALSE')
-        return response
-
     # Make filters accessible in templates.
     application.add_template_filter(filters.capitalize_first)
     application.add_template_filter(filters.format_links)
