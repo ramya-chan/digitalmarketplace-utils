@@ -46,8 +46,12 @@ def init_app(
     @application.after_request
     def add_header(response):
         response.headers['X-Frame-Options'] = 'DENY'
-        if hasattr(current_app, 'login_manager') and current_user.is_authenticated():
-            response.headers['Cache-Control'] = 'No-Cache'
+        if hasattr(current_app, 'login_manager'):
+            if current_user.is_authenticated():
+                response.headers['Cache-Control'] = 'No-Cache'
+                response.headers['X-Logged-In'] = 'TRUE'
+            else:
+                response.headers['X-Logged-In'] = 'FALSE'
         return response
 
     # Make filters accessible in templates.
