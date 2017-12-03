@@ -22,7 +22,7 @@ def test_timeformat():
         assert timeformat(dt) == formatted_time
 
     for dt, formatted_time in cases:
-        yield check_timeformat, dt, formatted_time
+        check_timeformat(dt, formatted_time)
 
 
 def test_shortdateformat():
@@ -41,7 +41,7 @@ def test_shortdateformat():
         assert shortdateformat(dt) == formatted_date
 
     for dt, formatted_date in cases:
-        yield check_shortdateformat, dt, formatted_date
+        check_shortdateformat(dt, formatted_date)
 
 
 def test_dateformat():
@@ -60,7 +60,7 @@ def test_dateformat():
         assert dateformat(dt) == formatted_date
 
     for dt, formatted_date in cases:
-        yield check_dateformat, dt, formatted_date
+        check_dateformat(dt, formatted_date)
 
 
 def test_datetimeformat():
@@ -83,7 +83,7 @@ def test_datetimeformat():
         assert datetimeformat(dt) == formatted_datetime
 
     for dt, formatted_datetime in cases:
-        yield check_datetimeformat, dt, formatted_datetime
+        check_datetimeformat(dt, formatted_datetime)
 
 
 def test_utcdatetimeformat():
@@ -100,7 +100,7 @@ def test_utcdatetimeformat():
         assert utcdatetimeformat(dt) == formatted_datetime
 
     for dt, formatted_datetime in cases:
-        yield check_datetimeformat, dt, formatted_datetime
+        check_datetimeformat(dt, formatted_datetime)
 
 
 @pytest.mark.parametrize(
