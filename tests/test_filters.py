@@ -6,7 +6,7 @@ import pytest
 
 from flask import Markup
 
-from dmutils.filters import capitalize_first, format_links, nbsp, smartjoin, preserve_line_breaks
+from dmutils.filters import capitalize_first, format_links, nbsp, smartjoin, preserve_line_breaks, split_camel_case
 
 
 def test_smartjoin_for_more_than_one_item():
@@ -148,3 +148,13 @@ def test_preserve_line_breaks(_autoescape):
     assert preserve_line_breaks(eval_ctx_mock, '\n') == '\n'
     assert preserve_line_breaks(eval_ctx_mock, 'You’ll be eating 🍕') == 'You’ll be eating 🍕'
     assert preserve_line_breaks(eval_ctx_mock, '\r\n\r\n  \r\n\r\n  \t\v \r\n\r\n') == '<br><br>'
+
+
+def test_split_camel_case():
+    assert split_camel_case('iAmCamelCase') == 'i Am Camel Case'
+    assert split_camel_case('IAmPascalCase') == 'I Am Pascal Case'
+    assert split_camel_case(['iAmCamelCase', 'IAmPascalCase']) == ['i Am Camel Case', 'I Am Pascal Case']
+    assert split_camel_case(('iAmCamelCase', 'IAmPascalCase')) == ['i Am Camel Case', 'I Am Pascal Case']
+    assert split_camel_case('i_am_snake_case') == 'i_am_snake_case'
+    assert split_camel_case({'i': 'should not be here'}) == {'i': 'should not be here'}
+    assert split_camel_case('You’ll be eating 🍕') == 'You’ll be eating 🍕'

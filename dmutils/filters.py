@@ -96,3 +96,26 @@ def preserve_line_breaks(eval_ctx, value):
         result = Markup(result)
 
     return result
+
+
+def split_camel_case(maybe_text):
+    """
+    If `maybe_text` is a camelCase string, split it into words. Leave capitalization as it is.
+    If it's a list or tuple, do the same thing to its elements and return as a list.
+    If it's anything else, return it unchanged.
+
+    Also works with PascalCase.
+
+    Example:
+
+    split_camel_case('iAmCamelCase') == 'i Am Camel Case'
+
+    :param maybe_text: Could be anything
+    :return: A string or a list
+    """
+    if maybe_text and isinstance(maybe_text, string_types):
+        return re.sub(r'((?<=[a-z])[A-Z]|(?<!\A)[A-Z](?=[a-z]))', r' \1', maybe_text)
+    elif isinstance(maybe_text, (list, tuple)):
+        return [split_camel_case(item) for item in maybe_text]
+
+    return maybe_text
