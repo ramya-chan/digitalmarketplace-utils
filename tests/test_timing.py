@@ -91,6 +91,27 @@ def null_context_manager():
     yield
 
 
+_non_word_chars_re = re.compile(r"\W")
+
+
+# a parametrization "id function" to make it easier to identify test variants
+def _base_idfn(value):
+    if value is timing.logged_duration.default_message:
+        return "def_message"
+    if value is _duration_real_gt_075:
+        return "dur_rl_gt_075"
+    if value is _default_and_no_exception:
+        return "def_no_exc"
+    if isinstance(value, str):
+        return _non_word_chars_re.sub("", value)
+    if value == ():
+        return "EMPTYTUP"
+    if value == []:
+        return "EMPTYLST"
+    if value == {}:
+        return "EMPTYDCT"
+
+
 class SentinelError(Exception):
     """An exception that can't be mistaken for a genuine problem"""
     pass
@@ -301,7 +322,8 @@ def _expect_log(
                 )],
             ),
         ),
-    ))
+    )),
+    ids=_base_idfn,
 )
 def test_logged_duration_mock_logger(
     app,
@@ -492,7 +514,8 @@ def test_logged_duration_mock_logger(
                 ),
             ),
         )
-    ))
+    )),
+    ids=_base_idfn,
 )
 def test_logged_duration_real_logger(
     app_logtofile,
