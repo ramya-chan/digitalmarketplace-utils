@@ -101,9 +101,9 @@ def init_app(app):
     if app.config['DM_APP_NAME'] != 'search-api':
         loggers.append(logging.getLogger('urllib3.util.retry'))
 
-    for logger in loggers:
-        logger.addHandler(handler)
-        logger.setLevel(loglevel)
+    for logger_ in loggers:
+        logger_.addHandler(handler)
+        logger_.setLevel(loglevel)
 
     app.logger.info('Logging configured')
 
@@ -293,6 +293,7 @@ class JSONFormatter(BaseJSONFormatter):
             else:
                 # execution should only ever reach this point once - when the .format() succeeds
                 if missing_keys:
+                    assert logger is logging.getLogger(__name__)
                     logger.warning("Missing keys when formatting log message: {}".format(tuple(missing_keys.keys())))
 
                 break

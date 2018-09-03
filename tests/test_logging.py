@@ -94,7 +94,7 @@ def test_init_app_only_adds_handlers_to_defined_loggers(app):
         and isinstance(v.handlers[0], logging.StreamHandler)
     }
 
-    assert loggers == {'conftest', 'dmutils', 'dmapiclient', 'flask_wtf.csrf', 'urllib3.util.retry'}
+    assert loggers == {'flask.app', 'dmutils', 'dmapiclient', 'flask_wtf.csrf', 'urllib3.util.retry'}
 
 
 def test_urllib3_retry_logger_not_configured_for_search_api(app):
@@ -124,8 +124,10 @@ def test_app_request_logs_responses_with_info_level(app, is_sampled):
     if is_sampled is not None:
         _set_request_class_is_sampled(app, is_sampled)
 
-    # since app.logger is a read-only property we need to patch the Flask class
-    with mock.patch('flask.Flask.logger') as logger:
+    with mock.patch('flask.app.create_logger') as create_logger:
+        del app.__dict__["logger"]
+        logger = create_logger.return_value
+
         app.test_client().get('/')
 
         assert logger.log.call_args_list == ([
@@ -168,8 +170,11 @@ def test_app_request_logs_5xx_responses_with_error_level(app, is_sampled):
         time.sleep(0.05)
         return 'error', 500
 
-    # since app.logger is a read-only property we need to patch the Flask class
-    with mock.patch('flask.Flask.logger') as logger:
+
+    with mock.patch('flask.app.create_logger') as create_logger:
+        del app.__dict__["logger"]
+        logger = create_logger.return_value
+
         app.test_client().get('/')
 
         assert logger.log.call_args_list == ([
