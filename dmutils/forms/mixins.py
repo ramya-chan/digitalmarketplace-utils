@@ -56,8 +56,8 @@ class DMFieldMixin:
     Derived classes which include this mixin should have a
     subclass of `wtforms.Field` in their base classes.
     '''
-    def __init__(self, label=None, validators=None, hint=None, question_advice=None, **kwargs):
-        super().__init__(label=label, validators=validators, **kwargs)
+    def __init__(self, question=None, validators=None, hint=None, question_advice=None, **kwargs):
+        super().__init__(label=question, validators=validators, **kwargs)
         if hint:
             self.hint = hint
         if question_advice:
@@ -102,8 +102,9 @@ class DMSelectFieldMixin:
     keyword argument. However, if both `options` and `choices` are specified
     then `options` will take precedence.
     '''
-    def __init__(self, label=None, validators=None, coerce=text_type, options=None, **kwargs):
-        super().__init__(label, validators=validators, coerce=coerce, **kwargs)
+    def __init__(self, question=None, validators=None, coerce=text_type, options=None, **kwargs):
+        super().__init__(question, validators=validators, coerce=coerce, **kwargs)
+
         if options:
             self.options = copy(options)
 

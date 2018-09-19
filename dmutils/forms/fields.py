@@ -90,18 +90,18 @@ class DMStringField(DMFieldMixin, wtforms.fields.StringField):
 class DMStripWhitespaceStringField(DMFieldMixin, wtforms.fields.StringField):
     widget = DMTextInput()
 
-    def __init__(self, label=None, **kwargs):
+    def __init__(self, question=None, **kwargs):
         kwargs['filters'] = tuple(chain(
             kwargs.get('filters', ()) or (),
             (
                 strip_whitespace,
             ),
         ))
-        super().__init__(label, **kwargs)
+        super().__init__(question, **kwargs)
 
 
 class DMEmailField(DMStripWhitespaceStringField):
-    def __init__(self, label=None, **kwargs):
+    def __init__(self, question=None, **kwargs):
         kwargs["validators"] = tuple(chain(
             kwargs.pop("validators", ()) or (),
             (
@@ -109,7 +109,7 @@ class DMEmailField(DMStripWhitespaceStringField):
                 Length(max=511, message="Please enter an email address under 512 characters."),
             ),
         ))
-        super().__init__(label, **kwargs)
+        super().__init__(question, **kwargs)
 
 
 class DMDateField(DMFieldMixin, wtforms.fields.Field):
@@ -153,8 +153,9 @@ class DMDateField(DMFieldMixin, wtforms.fields.Field):
         month = wtforms.fields.IntegerField("Month")
         year = wtforms.fields.IntegerField("Year")
 
-    def __init__(self, label=None, validators=None, hint=None, question_advice=None, separator='-', **kwargs):
-        super().__init__(label=label, validators=validators, hint=hint, question_advice=question_advice, **kwargs)
+    def __init__(self, question=None, validators=None, hint=None, question_advice=None, separator='-', **kwargs):
+        super().__init__(question, validators=validators, hint=hint, question_advice=question_advice,
+                         **kwargs)
         self.form_field = wtforms.fields.FormField(self._DateForm, separator=separator, **kwargs)
 
     def _value(self):
