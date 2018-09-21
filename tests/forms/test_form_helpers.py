@@ -7,9 +7,16 @@ import wtforms
 from werkzeug import MultiDict
 
 
+class DateForm(wtforms.Form):
+    year = wtforms.fields.IntegerField(validators=[wtforms.validators.InputRequired()])
+    month = wtforms.fields.IntegerField(validators=[wtforms.validators.InputRequired()])
+    day = wtforms.fields.IntegerField(validators=[wtforms.validators.InputRequired()])
+
+
 fields = (
     # (name, field),
     ("name", wtforms.fields.StringField(validators=[wtforms.validators.InputRequired()])),
+    ("date_of_birth", wtforms.fields.FormField(DateForm)),
 )
 
 
@@ -78,6 +85,21 @@ class TestGetErrorsFromWTForm:
                 "name": {
                     "input_name": "name",
                     "question": "Name",
+                    "message": "This field is required.",
+                },
+                "year": {
+                    "input_name": "year",
+                    "question": "Year",
+                    "message": "This field is required.",
+                },
+                "month": {
+                    "input_name": "month",
+                    "question": "Month",
+                    "message": "This field is required.",
+                },
+                "day": {
+                    "input_name": "day",
+                    "question": "Day",
                     "message": "This field is required.",
                 },
             }

@@ -24,8 +24,22 @@ def get_errors_from_wtform(form):
     :param form: A Flask-WTForm
     :return: A dict with three keys: `input_name`, `question`, and `message` suitable for passing into templates.
     """
-    return OrderedDict(
-        (key, {'input_name': key, 'question': form[key].label.text, 'message': form[key].errors[0]})
-        for key in
-        form.errors.keys()
-    )
+    def format_errors(fields, collection, errors):
+        for k in collection:
+            field = fields[k]
+            if isinstance(field.errors, list):
+                errors[k] = {
+                    "input_name": k,
+                    "question": field.label.text,
+                    "message": field.errors[0],
+                }
+            elif isinstance(field.errors, dict):
+                format_errors(field, field.errors, errors)
+            else:
+                raise ValueError("format_errors() expects a collection where each element is either a list or a dict")
+
+        return errors
+
+    errors = format_errors(form, form.errors, OrderedDict())
+
+    return errors
