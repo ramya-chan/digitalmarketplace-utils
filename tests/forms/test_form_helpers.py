@@ -40,6 +40,25 @@ class TestGetErrorsFromWTForm:
     def test_each_value_has_a_message_string(self, errors):
         assert all(isinstance(v["message"], str) for v in errors.values())
 
+    def test_if_values_are_supplied_output_is_empty(self):
+        class Form(wtforms.Form):
+            pass
+
+        for name, field in fields:
+            setattr(Form, name, field)
+
+        form = Form(MultiDict({
+            "name": "Bob Blob",
+            "date_of_birth-year": "2012",
+            "date_of_birth-month": "05",
+            "date_of_birth-day": "04",
+            "any_other_details": "true",
+            "true": "more details",
+        }))
+
+        assert form.validate()
+        assert len(get_errors_from_wtform(form)) == 0
+
     def test_example_output(self):
         class Form(wtforms.Form):
             pass
