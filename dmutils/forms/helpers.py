@@ -29,7 +29,7 @@ def get_errors_from_wtform(form):
             field = fields[k]
             if isinstance(field.errors, list):
                 errors[k] = {
-                    "input_name": k,
+                    "input_name": field.id,
                     "question": field.label.text,
                     "message": field.errors[0],
                 }
