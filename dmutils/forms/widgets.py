@@ -26,14 +26,15 @@ class DMJinjaWidgetBase:
             del self.__context__["question"]
 
     def __call__(self, field, **kwargs):
+        return self._render(self.context(field, kwargs))
 
+    def context(self, obj, dict):
         # get the template variables
         # precedence (decreasing order)
-        # - kwargs to __call__
+        # - dict (kwargs to __call__)
         # - kwargs to constructor
-        # - field values
+        # - obj (field) values
         # - widget defaults
-
         context = {}
         context.update(self.__context__)
 
@@ -42,13 +43,13 @@ class DMJinjaWidgetBase:
             # this is just the class name of the field
             if attr == "type":
                 continue
-            if hasattr(field, attr):
-                context[attr] = getattr(field, attr)
+            if hasattr(obj, attr):
+                context[attr] = getattr(obj, attr)
 
         context.update(self.__constructor_kwargs__)
-        context.update(kwargs)
+        context.update(dict)
 
-        return self._render(context)
+        return context
 
     def _render(self, *args, **kwargs):
         # cache the template
