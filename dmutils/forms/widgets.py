@@ -4,8 +4,48 @@ from flask import current_app
 __all__ = ["DMCheckboxInput", "DMDateInput", "DMRadioInput", "DMTextInput", "DMTextArea", "DMUnitInput"]
 
 
-class DMJinjaWidgetBase:
+class WidgetParamsMixin:
 
+    def __init__(self, **kwargs):
+        super().__init__()
+        self.__dict__.update(kwargs)
+        self.__params__ = {k for k in dir(self) if not k.startswith("_")}
+
+    def params(self, obj=None, **kwargs):
+        params = {}
+
+        for param in self.__params__:
+            value = getattr(self, param, None)
+            if value is None:
+                value = getattr(obj, param, None)
+            params[param] = value
+
+        params.update(kwargs)
+
+        return params
+
+    def __call__(self, field, **kwargs):
+        return self.params(field, **kwargs)
+
+
+class JinjaWidgetMixin:
+    def render(self, *args, **kwargs):
+        return current_app.jinja_env.get_template(self.__template__).render(*args, **kwargs)
+
+
+class DMJinjaWidgetBase(JinjaWidgetMixin, WidgetParamsMixin):
+
+    def __init__(self, hide_question=False, **kwargs):
+        super().__init__(**kwargs)
+
+        if hide_question:
+            self.__params__.discard("question")
+
+    def __call__(self, field, **kwargs):
+        return self.render(self.params(field, **kwargs))
+
+
+class DMJinjaWidget(DMJinjaWidgetBase):
     # we include common template arguments here to avoid repetition
     error = None
     name = None
@@ -14,81 +54,36 @@ class DMJinjaWidgetBase:
     question_advice = None
     value = None
 
-    def __init__(self, hide_question=False, **kwargs):
-        self.__template__ = None
 
-        self.__context__ = {k: getattr(self, k) for k in dir(self) if not k.startswith("_")}
-        self.__constructor_kwargs__ = kwargs
-
-        self.__dict__.update(kwargs)
-
-        if hide_question:
-            del self.__context__["question"]
-
-    def __call__(self, field, **kwargs):
-        return self._render(self.context(field, kwargs))
-
-    def context(self, obj, dict):
-        # get the template variables
-        # precedence (decreasing order)
-        # - dict (kwargs to __call__)
-        # - kwargs to constructor
-        # - obj (field) values
-        # - widget defaults
-        context = {}
-        context.update(self.__context__)
-
-        for attr in context:
-            # we don't want the type from the field because
-            # this is just the class name of the field
-            if attr == "type":
-                continue
-            if hasattr(obj, attr):
-                context[attr] = getattr(obj, attr)
-
-        context.update(self.__constructor_kwargs__)
-        context.update(dict)
-
-        return context
-
-    def _render(self, *args, **kwargs):
-        # cache the template
-        # this cannot be done in __init__ as the flask app may not exist
-        if not self.__template__:
-            self.__template__ = current_app.jinja_env.get_template(self.__template_file__)
-
-        return self.__template__.render(*args, **kwargs)
-
-
-class DMSelectionButtonBase(DMJinjaWidgetBase):
-    __template_file__ = "toolkit/forms/selection-buttons.html"
+class DMSelectionButtons(DMJinjaWidget):
+    __template__ = "toolkit/forms/selection-buttons.html"
 
     type = None
     inline = None
     options = None
 
 
-class DMCheckboxInput(DMSelectionButtonBase):
+class DMCheckboxInput(DMSelectionButtons):
     type = "checkbox"
 
 
-class DMDateInput(DMJinjaWidgetBase):
-    __template_file__ = "toolkit/forms/date.html"
+class DMDateInput(DMJinjaWidget):
+    __template__ = "toolkit/forms/date.html"
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        del self.__context__["value"]
+        self.__params__.discard("value")
 
     def __call__(self, field, **kwargs):
         return super().__call__(field, data=field.value, **kwargs)
 
 
-class DMRadioInput(DMSelectionButtonBase):
+class DMRadioInput(DMSelectionButtons):
     type = "radio"
 
 
-class DMTextInput(DMJinjaWidgetBase):
-    __template_file__ = "toolkit/forms/textbox.html"
+class DMTextInput(DMJinjaWidget):
+    __template__ = "toolkit/forms/textbox.html"
 
 
 class DMTextArea(DMTextInput):

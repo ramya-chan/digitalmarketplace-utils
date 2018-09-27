@@ -10,13 +10,13 @@ import wtforms
 
 
 def get_render_context(widget):
-    call = widget._render.call_args
+    call = widget.render.call_args
     return dict(call[0][1], **call[1])
 
 
 @pytest.fixture(autouse=True)
 def render():
-    patch = mock.patch("dmutils.forms.widgets.DMJinjaWidgetBase._render", autospec=True)
+    patch = mock.patch("dmutils.forms.widgets.DMJinjaWidgetBase.render", autospec=True)
     yield patch.start()
     patch.stop()
 
@@ -43,14 +43,15 @@ def field():
 
 def test_calling_widget_calls_template_render(widget, field):
     widget(field)
-    assert widget._render.called
+    assert widget.render.called
 
 
 def test_template_context_is_populated_from_field(widget):
     field = mock.Mock()  # use a blank mock to collect all attributes
+    context = widget.params()
     widget(field)
-    for k in widget.__context__:
-        if widget.__context__[k] is not None:
+    for k in context:
+        if context[k] is not None:
             continue
         assert k in dir(field)
         assert k in get_render_context(widget)
@@ -66,12 +67,6 @@ def test_template_context_includes_question_advice(widget, field):
     field.question_advice = "Advice text."
     widget(field)
     assert get_render_context(widget)["question_advice"] == "Advice text."
-
-
-def test_arguments_can_be_added_to_template_context_from_widget_constructor(widget_class, field):
-    widget = widget_class(foo="bar")
-    widget(field)
-    assert get_render_context(widget)["foo"] == "bar"
 
 
 def test_template_context_argument_will_default_to_none_if_not_in_field(widget, field):
@@ -150,7 +145,7 @@ class TestDMSelectionButtons:
 class TestDMBooleanField:
     @pytest.fixture
     def widget_class(self):
-        return dmutils.forms.widgets.DMSelectionButtonBase
+        return dmutils.forms.widgets.DMSelectionButtons
 
     @pytest.fixture
     def field_class(self):
