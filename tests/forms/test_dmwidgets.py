@@ -59,19 +59,16 @@ def test_template_context_is_populated_from_field(widget):
 
 def test_template_context_includes_hint(widget, field):
     field.hint = "Hint text."
-    widget(field)
-    assert get_render_context(widget)["hint"] == "Hint text."
+    assert widget.params(field)["hint"] == "Hint text."
 
 
 def test_template_context_includes_question_advice(widget, field):
     field.question_advice = "Advice text."
-    widget(field)
-    assert get_render_context(widget)["question_advice"] == "Advice text."
+    assert widget.params(field)["question_advice"] == "Advice text."
 
 
 def test_template_context_argument_will_default_to_none_if_not_in_field(widget, field):
-    widget(field)
-    assert get_render_context(widget)["question_advice"] is None
+    assert widget.params(field)["question_advice"] is None
 
 
 def test_arguments_to_widget_constructor_change_widget_attributes(widget_class, field):
@@ -82,8 +79,7 @@ def test_arguments_to_widget_constructor_change_widget_attributes(widget_class, 
 def test_arguments_to_widget_constructors_take_precedence_over_field_class_attributes(widget_class, field):
     widget = widget_class(foo="bar")
     field.__class__.foo = "baz"
-    widget(field)
-    assert get_render_context(widget)["foo"] == "bar"
+    assert widget.params(field)["foo"] == "bar"
 
 
 class TestDMTextArea:
@@ -92,18 +88,15 @@ class TestDMTextArea:
         return dmutils.forms.widgets.DMTextArea
 
     def test_dm_text_area_sends_large_is_true_to_template(self, widget, field):
-        widget(field)
-        assert get_render_context(widget)["large"] is True
+        assert widget.params(field)["large"] is True
 
     @pytest.mark.parametrize("max_length_in_words", (1, 45, 100))
     def test_dm_text_area_can_send_max_length_in_words_to_template(self, widget_class, max_length_in_words, field):
         widget = widget_class()
-        widget(field)
-        assert "max_length_in_words" not in get_render_context(widget)
+        assert "max_length_in_words" not in widget.params(field)
 
         widget = widget_class(max_length_in_words=max_length_in_words)
-        widget(field)
-        assert get_render_context(widget)["max_length_in_words"] == max_length_in_words
+        assert widget.params(field)["max_length_in_words"] == max_length_in_words
 
     def test_dm_text_area_max_words_template_constant_is_instance_variable(self, widget_class):
         widget1 = widget_class(max_length_in_words=mock.sentinel.max_length1)
