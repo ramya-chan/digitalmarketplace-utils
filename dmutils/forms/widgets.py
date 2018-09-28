@@ -11,13 +11,13 @@ class WidgetParamsMixin:
         self.__dict__.update(kwargs)
         self.__params__ = {k for k in dir(self) if not k.startswith("_")}
 
-    def params(self, obj=None, **kwargs):
+    def params(self, field, **kwargs):
         params = {}
 
         for param in self.__params__:
             value = getattr(self, param, None)
             if value is None:
-                value = getattr(obj, param, None)
+                value = getattr(field, param, None)
             params[param] = value
 
         params.update(kwargs)

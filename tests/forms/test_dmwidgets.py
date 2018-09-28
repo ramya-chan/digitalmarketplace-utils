@@ -48,7 +48,7 @@ def test_calling_widget_calls_template_render(widget, field):
 
 def test_template_context_is_populated_from_field(widget):
     field = mock.Mock()  # use a blank mock to collect all attributes
-    context = widget.params()
+    context = widget.params(field)
     widget(field)
     for k in context:
         if context[k] is not None:
