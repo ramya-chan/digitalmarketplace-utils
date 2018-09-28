@@ -75,21 +75,6 @@ def test_template_context_includes_question_advice(widget, field):
     assert widget.params(field)["question_advice"] == "Advice text."
 
 
-def test_template_context_argument_will_default_to_none_if_not_in_field(widget, field):
-    assert widget.params(field)["question_advice"] is None
-
-
-def test_arguments_to_widget_constructor_change_widget_attributes(widget_class, field):
-    widget = widget_class(foo="bar")
-    assert widget.foo == "bar"
-
-
-def test_arguments_to_widget_constructors_take_precedence_over_field_class_attributes(widget_class, field):
-    widget = widget_class(foo="bar")
-    field.__class__.foo = "baz"
-    assert widget.params(field)["foo"] == "bar"
-
-
 class TestDMTextArea:
     @pytest.fixture()
     def widget_class(self):
