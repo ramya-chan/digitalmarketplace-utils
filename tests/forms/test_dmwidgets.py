@@ -31,14 +31,22 @@ def widget(widget_class):
     return widget_class()
 
 
-# We need this to limit what is accessed on our field mock
-class FieldSpec(dmutils.forms.mixins.DMFieldMixin, wtforms.Field):
-    pass
-
-
 @pytest.fixture
 def field():
-    return mock.Mock(spec=FieldSpec)
+    return mock.Mock(
+        spec=[
+            "name",
+            "question",
+            "question_advice",
+            "hint",
+            "error",
+            "value",
+            "options",
+            "unit",
+            "unit_in_full",
+            "unit_position",
+        ]
+    )
 
 
 def test_calling_widget_calls_template_render(widget, field):
