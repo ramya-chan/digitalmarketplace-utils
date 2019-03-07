@@ -142,6 +142,12 @@ class DMMailChimpClient(object):
                     extra={"error": str(e), "mailchimp_response": response}
                 )
                 return True
+            elif "The contact must re-subscribe to get back on the list." in response.get("detail", ""):
+                try:
+                    with log_external_request(service='Mailchimp'):
+                        return self._client.lists.members.update(list_id, hashed_email, {"status": "pending"})
+                except:
+                    pass
             # Otherwise this was an unexpected error and should be logged as such
             self.logger.error(
                 f"Mailchimp failed to add user ({hashed_email}) to list ({list_id})",
