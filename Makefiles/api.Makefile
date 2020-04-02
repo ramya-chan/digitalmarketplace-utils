@@ -1,4 +1,5 @@
 SHELL := /bin/bash
+MAKEFILEDIR := ./Makefiles
 VIRTUALENV_ROOT := $(shell [ -z $$VIRTUAL_ENV ] && echo $$(pwd)/venv || echo $$VIRTUAL_ENV)
 
 .PHONY: run-all
@@ -40,14 +41,6 @@ test-flake8: virtualenv requirements-dev
 test-unit: virtualenv requirements-dev
 	${VIRTUALENV_ROOT}/bin/py.test ${PYTEST_ARGS}
 
-.PHONY: docker-build
-docker-build:
-	$(if ${RELEASE_NAME},,$(eval export RELEASE_NAME=$(shell git describe)))
-	@echo "Building a docker image for ${RELEASE_NAME}..."
-	docker build -t digitalmarketplace/search-api --build-arg release_name=${RELEASE_NAME} .
-	docker tag digitalmarketplace/search-api digitalmarketplace/search-api:${RELEASE_NAME}
-
-.PHONY: docker-push
-docker-push:
-	$(if ${RELEASE_NAME},,$(eval export RELEASE_NAME=$(shell git describe)))
-	docker push digitalmarketplace/search-api:${RELEASE_NAME}
+.PHONY: docker-%
+docker-%:
+	@$(MAKE) -f $(MAKEFILEDIR)/include/docker.Makefile $@

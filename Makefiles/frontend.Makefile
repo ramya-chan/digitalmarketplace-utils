@@ -1,4 +1,5 @@
 SHELL := /bin/bash
+MAKEFILEDIR := ./Makefiles
 VIRTUALENV_ROOT := $(shell [ -z $$VIRTUAL_ENV ] && echo $$(pwd)/venv || echo $$VIRTUAL_ENV)
 DM_ENVIRONMENT ?= development
 
@@ -64,16 +65,6 @@ show-environment:
 	@echo "Environment variables in use:"
 	@env | grep DM_ || true
 
-.PHONY: docker-build
-docker-build:
-	$(if ${DOCKER_REPO_NAME},,$(eval export DOCKER_REPO_NAME=$(subst digitalmarketplace-,,$(notdir $(shell pwd)))))
-	$(if ${RELEASE_NAME},,$(eval export RELEASE_NAME=$(shell git describe)))
-	@echo "Building a docker image for digitalmarketplace/${DOCKER_REPO_NAME}:${RELEASE_NAME}..."
-	docker build -t digitalmarketplace/${DOCKER_REPO_NAME} --build-arg release_name=${RELEASE_NAME} .
-	docker tag digitalmarketplace/${DOCKER_REPO_NAME} digitalmarketplace/${DOCKER_REPO_NAME}:${RELEASE_NAME}
-
-.PHONY: docker-push
-docker-push:
-	$(if ${DOCKER_REPO_NAME},,$(eval export DOCKER_REPO_NAME=$(subst digitalmarketplace-,,$(notdir $(shell pwd)))))
-	$(if ${RELEASE_NAME},,$(eval export RELEASE_NAME=$(shell git describe)))
-	docker push digitalmarketplace/${DOCKER_REPO_NAME}:${RELEASE_NAME}
+.PHONY: docker-%
+docker-%:
+	@$(MAKE) -f $(MAKEFILEDIR)/include/docker.Makefile $@
