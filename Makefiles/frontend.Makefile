@@ -3,6 +3,8 @@ MAKEFILEDIR := ./Makefiles
 
 include $(MAKEFILEDIR)/include/python.Makefile
 
+.DEFAULT_GOAL := run-all
+
 DM_ENVIRONMENT ?= development
 
 ifeq ($(DM_ENVIRONMENT),development)

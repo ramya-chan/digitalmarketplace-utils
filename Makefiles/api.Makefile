@@ -3,6 +3,8 @@ MAKEFILEDIR := ./Makefiles
 
 include $(MAKEFILEDIR)/include/python.Makefile
 
+.DEFAULT_GOAL := run-all
+
 .PHONY: run-all
 run-all: requirements run-app
 
