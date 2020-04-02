@@ -7,6 +7,7 @@ include $(MAKEFILEDIR)/include/python.Makefile
 .DEFAULT_GOAL := run-all
 
 .PHONY: run-app
+## Run the app
 run-app: show-environment virtualenv
 	${VIRTUALENV_ROOT}/bin/flask run
 
