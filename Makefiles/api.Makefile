@@ -42,12 +42,16 @@ test-unit: virtualenv requirements-dev
 
 .PHONY: docker-build
 docker-build:
+	$(if ${DOCKER_REPO_NAME},,$(eval export DOCKER_REPO_NAME=$(subst digitalmarketplace-,,$(notdir $(shell pwd)))))
 	$(if ${RELEASE_NAME},,$(eval export RELEASE_NAME=$(shell git describe)))
-	@echo "Building a docker image for ${RELEASE_NAME}..."
-	docker build -t digitalmarketplace/search-api --build-arg release_name=${RELEASE_NAME} .
-	docker tag digitalmarketplace/search-api digitalmarketplace/search-api:${RELEASE_NAME}
+	
+	@echo "Building a docker image for digitalmarketplace/${DOCKER_REPO_NAME}:${RELEASE_NAME}..."
+	docker build -t digitalmarketplace/${DOCKER_REPO_NAME} --build-arg release_name=${RELEASE_NAME} .
+	docker tag digitalmarketplace/${DOCKER_REPO_NAME} digitalmarketplace/${DOCKER_REPO_NAME}:${RELEASE_NAME}
 
 .PHONY: docker-push
 docker-push:
+	$(if ${DOCKER_REPO_NAME},,$(eval export DOCKER_REPO_NAME=$(subst digitalmarketplace-,,$(notdir $(shell pwd)))))
 	$(if ${RELEASE_NAME},,$(eval export RELEASE_NAME=$(shell git describe)))
-	docker push digitalmarketplace/search-api:${RELEASE_NAME}
+	
+	docker push digitalmarketplace/${DOCKER_REPO_NAME}:${RELEASE_NAME}
