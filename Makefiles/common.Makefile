@@ -1,6 +1,7 @@
 SHELL := /bin/bash
 MAKEFILEDIR := ./Makefiles
 
+include $(MAKEFILEDIR)/include/help.Makefile
 include $(MAKEFILEDIR)/include/python.Makefile
 
 .DEFAULT_GOAL := run-all
