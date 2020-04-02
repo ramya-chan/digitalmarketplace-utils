@@ -1,9 +1,6 @@
-SHELL := /bin/bash
 MAKEFILEDIR := ./Makefiles
 
-include $(MAKEFILEDIR)/include/python.Makefile
-
-.DEFAULT_GOAL := run-all
+include $(MAKEFILEDIR)/common.Makefile
 
 DM_ENVIRONMENT ?= development
 
@@ -15,10 +12,6 @@ endif
 
 .PHONY: run-all
 run-all: requirements npm-install frontend-build run-app
-
-.PHONY: run-app
-run-app: show-environment virtualenv
-	${VIRTUALENV_ROOT}/bin/flask run
 
 .PHONY: npm-install
 npm-install:
@@ -34,12 +27,3 @@ test: show-environment frontend-build test-flake8 test-python test-javascript
 .PHONY: test-javascript
 test-javascript: frontend-build
 	npm test
-
-.PHONY: show-environment
-show-environment:
-	@echo "Environment variables in use:"
-	@env | grep DM_ || true
-
-.PHONY: docker-%
-docker-%:
-	@$(MAKE) -f $(MAKEFILEDIR)/include/docker.Makefile $@
