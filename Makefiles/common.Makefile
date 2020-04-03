@@ -18,3 +18,6 @@ show-environment:
 
 docker-%:
 	@$(MAKE) -f $(MAKEFILEDIR)/include/docker.Makefile $@
+
+makefiles-%:
+	@$(MAKE) -f $(MAKEFILEDIR)/include/makefiles.Makefile $@

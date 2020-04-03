@@ -1,7 +1,8 @@
 MAKEFILEDIR := Makefiles
 
 HELP_INCLUDE := \
-	$(MAKEFILEDIR)/include/docker.Makefile
+	$(MAKEFILEDIR)/include/docker.Makefile \
+	$(MAKEFILEDIR)/include/makefiles.Makefile
 
 .PHONY: help
 
