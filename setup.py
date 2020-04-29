@@ -44,5 +44,11 @@ setup(
          'Werkzeug>=0.16,<1.1.0',
          'workdays>=1.4',
     ],
+    extras_requires={
+        'frontend': [
+            'Flask-Session',
+            'redis',
+        ],
+    },
     python_requires="~=3.6",
 )
