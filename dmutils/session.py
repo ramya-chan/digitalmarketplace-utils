@@ -9,5 +9,5 @@ def init_app(app):
     redis_service_name = app.config["DM_REDIS_SERVICE_NAME"]
     redis_service = cf.get_service_by_name_from_vcap_services(vcap_services, redis_service_name)
 
-    app.config["SESSION_REDIS"] = redis.from_url(redis_service["credentials"]["url"])
+    app.config["SESSION_REDIS"] = redis.from_url(redis_service["credentials"]["uri"])
     flask_session.Session(app)
