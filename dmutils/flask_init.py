@@ -61,6 +61,8 @@ def init_app(
         db.init_app(application)
     if login_manager:
         login_manager.init_app(application)
+        import dmutils.session
+        dmutils.session.init_app(application)
     if search_api_client:
         search_api_client.init_app(application)
 
