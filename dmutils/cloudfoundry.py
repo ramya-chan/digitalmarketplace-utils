@@ -10,7 +10,7 @@ def get_vcap_services(app, default=None) -> dict:
     if app.config.get("VCAP_SERVICES") is None:
         return default
 
-    vcap_services = json.loads(app.config("VCAP_SERVICES"))
+    vcap_services = json.loads(app.config["VCAP_SERVICES"])
 
     return vcap_services
 
