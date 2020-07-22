@@ -3,6 +3,7 @@
 from .errors import get_errors_from_wtform  # noqa: F401
 
 import typing
+from flask import Markup
 
 
 def remove_csrf_token(data):
@@ -88,5 +89,5 @@ def govuk_options(options: typing.List[typing.Dict]) -> typing.List[typing.Dict]
     return [govuk_option(option) for option in options]
 
 
-def govuk_text_input(option: typing.Dict) -> typing.Dict:
-    print('in here')
+def govuk_text_input(question, brief, errors):
+    return Markup("<h1>Hello World</h1>")
