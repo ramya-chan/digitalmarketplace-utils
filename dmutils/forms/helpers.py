@@ -1,7 +1,5 @@
-
 # allow importing from dmutils.forms.helpers for backwards compatibility
 from .errors import get_errors_from_wtform  # noqa: F401
-
 import typing
 from flask import Markup
 
@@ -90,4 +88,19 @@ def govuk_options(options: typing.List[typing.Dict]) -> typing.List[typing.Dict]
 
 
 def govuk_text_input(question, brief, errors):
-    return Markup("<h1>Hello World</h1>")
+    value = brief['title'] if 'title' in brief else ""
+    return {
+        "classes": "app-text-input--height-compatible",
+        # "errorMessage": errors[question.id],
+        "hint": {
+            "text": question['hint'],
+        },
+        "id": "input-"+question['id'],
+        "label": {
+            "text": question['question'],
+            "classes": 'question-heading govuk-visually-hidden'
+        },
+        "name": question['id'],
+        "type": "text",
+        "value": value
+    }
