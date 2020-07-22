@@ -89,9 +89,10 @@ def govuk_options(options: typing.List[typing.Dict]) -> typing.List[typing.Dict]
 
 def govuk_text_input(question, brief, errors):
     value = brief['title'] if 'title' in brief else ""
+    error_message = errors[question.id] if errors else ""
     return {
         "classes": "app-text-input--height-compatible",
-        # "errorMessage": errors[question.id],
+        "errorMessage": error_message,
         "hint": {
             "text": question['hint'],
         },
