@@ -1,7 +1,6 @@
 # allow importing from dmutils.forms.helpers for backwards compatibility
 from .errors import get_errors_from_wtform  # noqa: F401
 import typing
-from flask import Markup
 
 
 def remove_csrf_token(data):
