@@ -1,3 +1,5 @@
+MAKEFILE_VERSION := Makefiles/frontend.Makefile@MAKEFILE_GITREV
+
 SHELL := /bin/bash
 VIRTUALENV_ROOT := $(shell [ -z $$VIRTUAL_ENV ] && echo $$(pwd)/venv || echo $$VIRTUAL_ENV)
 DM_ENVIRONMENT ?= development
