@@ -6,6 +6,7 @@ from dateutil.parser import parse as parse_time
 import logging
 import mimetypes
 import os
+import json
 
 import flask
 
@@ -237,3 +238,25 @@ def get_file_size(file_):
     # see it's like nothing happened, right?
 
     return size
+
+def generate_presigned_post(s3_bucket, file_name, file_type):
+    print(s3_bucket)
+
+    s3 = boto3.client('s3')
+
+    presigned_post = s3.generate_presigned_post(
+        Bucket = s3_bucket,
+        Key = file_name,
+        Fields = {"acl": "public-read", "Content-Type": file_type},
+        Conditions = [
+        {"acl": "public-read"},
+        {"Content-Type": file_type}
+        ],
+        ExpiresIn = 3600
+    )
+
+    return json.dumps({
+        'data': presigned_post,
+        'url': 'https://%s.s3.amazonaws.com/%s' % (s3_bucket, file_name)
+        })
+        
